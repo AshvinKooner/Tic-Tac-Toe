@@ -1,6 +1,3 @@
-from filecmp import cmpfiles
-
-
 board = [["-", "-", "-"],
 ["-", "-", "-"],
 ["-", "-", "-"]]
@@ -108,3 +105,4 @@ while complete == False:
         elif check_win(board, player2) == True:
             print("GAME OVER: PLAYER 2 WINS")
             complete = True
+    
