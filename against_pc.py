@@ -1,3 +1,5 @@
+import copy
+
 main_board = [["-", "-", "-"],
 ["-", "-", "-"],
 ["-", "-", "-"]]
@@ -9,11 +11,12 @@ def display_board(board):
             print(col, end = " ")
         print()
 
-def select(main_board, row, col, player):
-    if main_board[row][col] == "-":
-        main_board[row][col] = player
+def select(board, row, col, player):
+    if board[row][col] == "-":
+        board[row][col] = player
     else:
         raise Exception("square is occupied")
+    return board
 
 def check_win(board, player):
     ## Horizontal
@@ -58,12 +61,13 @@ def minimax(board, player_symbol, ai_symbol, depth, isMaximising):
     ## Check if result is a draw
     if check_draw(board) == True:
         return 0
-    ## Check if result is loss for AI, add depth so loss is delayed as much as possible
-    elif check_win(player_symbol) == True:
-        return -1 + depth
-    ## Check if result is win for AI, subtract depth so shortest route to victory is favoured
-    elif check_win(ai_symbol) == True:
-        return 1 - depth
+    ## Check if result is loss for AI
+    elif check_win(board, player_symbol) == True:
+        return -1
+        print("L")
+    ## Check if result is win for AI
+    elif check_win(board, ai_symbol) == True:
+        return 1
 
     if isMaximising:
         ## AI picks optimal move by maximising AI's score
@@ -71,7 +75,7 @@ def minimax(board, player_symbol, ai_symbol, depth, isMaximising):
         moves = possible_moves(board)
         for move in moves:
             row, col = move
-            new_board = board
+            new_board = copy.deepcopy(board)
             new_board[row][col] = ai_symbol
             value = minimax(new_board, player_symbol, ai_symbol, depth + 1, False)
             best_value = max(best_value, value)
@@ -82,7 +86,7 @@ def minimax(board, player_symbol, ai_symbol, depth, isMaximising):
         moves = possible_moves(board)
         for move in moves:
             row, col = move
-            new_board = board
+            new_board = copy.deepcopy(board)
             new_board[row][col] = player_symbol
             value = minimax(new_board, player_symbol, ai_symbol, depth + 1, True)
             best_value = min(best_value, value)
@@ -91,19 +95,20 @@ def minimax(board, player_symbol, ai_symbol, depth, isMaximising):
 def find_best_move(board, player_symbol, ai_symbol):
     moves = possible_moves(board)
     best_value = -2
-    best_move = None
     for move in moves:
         row, col = move
-        new_board = board
+        new_board = copy.deepcopy(board)
         new_board[row][col] = ai_symbol
-        value = minimax(new_board, player_symbol, ai_symbol, 1, True)
+        value = minimax(new_board, player_symbol, ai_symbol, 1, False)
+        print(move, value)
         if value > best_value:
+            best_value = value
             best_move = move
     return best_move
 
 complete = False
 
-display_board(board)
+display_board(main_board)
 
 player_symbol = "X"
 ai_symbol = "O"
@@ -120,7 +125,8 @@ while complete == False:
             print(row, col)
             row = int(row)
             col = int(col)
-            main_board = select(main_board, row, col, player_symbol)
+            current_state = copy.deepcopy(main_board)
+            main_board = select(current_state, row, col, player_symbol)
             valid = True
         except:
             print("Choose a different square")
@@ -136,18 +142,21 @@ while complete == False:
         complete = True
 
     ## AI turn
-    ai_move = find_best_move(main_board, player_symbol, ai_symbol)
-    row, col = ai_move
-    print("\n AI move: ({},{})".format(row, col))
-    main_board = select(main_board, row, col, ai_symbol)
+    if complete == False:
+        current_state = copy.deepcopy(main_board)
+        ai_move = find_best_move(current_state, player_symbol, ai_symbol)
+        row, col = ai_move
+        print("\n AI move: ({},{})".format(row, col))
 
-    display_board(main_board)
+        main_board = select(main_board, row, col, ai_symbol)
 
-    ## Check if game is over
-    if check_draw(main_board) == True:
-        print("GAME OVER: A DRAW")
-        complete = True
-    elif check_win(main_board, ai_symbol) == True:
-        print("GAME OVER: AI WINS")
-        complete = True
+        display_board(main_board)
+
+        ## Check if game is over
+        if check_draw(main_board) == True:
+            print("GAME OVER: A DRAW")
+            complete = True
+        elif check_win(main_board, ai_symbol) == True:
+            print("GAME OVER: AI WINS")
+            complete = True
     
