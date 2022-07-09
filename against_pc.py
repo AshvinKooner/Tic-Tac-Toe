@@ -100,7 +100,7 @@ def find_best_move(board, player_symbol, ai_symbol):
         new_board = copy.deepcopy(board)
         new_board[row][col] = ai_symbol
         value = minimax(new_board, player_symbol, ai_symbol, 1, False)
-        print(move, value)
+#        print(move, value)
         if value > best_value:
             best_value = value
             best_move = move
@@ -119,10 +119,10 @@ while complete == False:
     valid = False
     while valid == False:
         try:
-            print("\nPLAYER 1:")
+            print("\nPLAYER:")
             selection = input("Enter coords of square (row,col): ")
             row, col = selection.strip("()").split(",")
-            print(row, col)
+#            print(row, col)
             row = int(row)
             col = int(col)
             current_state = copy.deepcopy(main_board)
@@ -146,7 +146,7 @@ while complete == False:
         current_state = copy.deepcopy(main_board)
         ai_move = find_best_move(current_state, player_symbol, ai_symbol)
         row, col = ai_move
-        print("\n AI move: ({},{})".format(row, col))
+        print("\nAI move: ({},{})".format(row, col))
 
         main_board = select(main_board, row, col, ai_symbol)
 
