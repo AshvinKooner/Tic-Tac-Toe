@@ -161,6 +161,7 @@ while terminal == False:
             terminal = True
             print("GAME OVER: A DRAW")
         elif game.check_result() == game.ai_symbol:
+            terminal = True
             print("GAME OVER: YOU LOSE")
 
     
